@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Portal</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  background:#0f172a;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* 🔥 Welcome Screen */
+#welcome{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg,#020617,#1e293b);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:999;
+}
+
+#welcome h1{
+  animation:zoom 1s;
+}
+
+@keyframes zoom{
+  from{transform:scale(0);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+/* 🔥 Fireball orbit */
+.orbit{
+  width:120px;
+  height:120px;
+  border:1px dashed #38bdf8;
+  border-radius:50%;
+  position:relative;
+  margin-top:20px;
+  animation:rotate 3s linear infinite;
+}
+
+.fire{
+  width:15px;
+  height:15px;
+  background:orange;
+  border-radius:50%;
+  position:absolute;
+  top:-8px;
+  left:50%;
+  box-shadow:0 0 15px orange;
+}
+
+@keyframes rotate{
+  from{transform:rotate(0);}
+  to{transform:rotate(360deg);}
+}
+
+/* 🖱️ Cursor */
+.cursor{
+  width:10px;
+  height:10px;
+  background:#38bdf8;
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+
+/* 🎓 Stickers */
+.sticker{
+  position:absolute;
+  font-size:30px;
+  animation:float 3s infinite;
+}
+.s1{top:10%;left:10%;}
+.s2{top:80%;left:80%;}
+
+@keyframes float{
+  50%{transform:translateY(-20px);}
+}
+
+/* 📦 Container */
+.container{
+  width:400px;
+  margin:40px auto;
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 0 20px #38bdf8;
+}
+
+/* Inputs */
+input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:none;
+  background:#334155;
+  color:white;
+}
+
+/* Button */
+button{
+  width:100%;
+  padding:10px;
+  background:#38bdf8;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+button:hover{
+  transform:scale(1.05);
+}
+
+/* Steps */
+.step{display:none;}
+.active{display:block;}
+
+/* Popup */
+#popup{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:red;
+  padding:10px;
+  border-radius:6px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔥 Welcome -->
+<div id="welcome">
+  <h1>Welcome to Student Portal 🎓</h1>
+  <div style="font-size:40px;">✨📚✨</div>
+
+  <div class="orbit">
+    <div class="fire"></div>
+  </div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+
+<div class="sticker s1">🎓</div>
+<div class="sticker s2">📚</div>
+
+<div class="container">
+
+<!-- Step 1 -->
+<div class="step active" id="s1">
+<h3>Step 1: Personal</h3>
+<input id="name" placeholder="Name">
+<input id="email" placeholder="Email">
+<button onclick="next(2)">Next</button>
+</div>
+
+<!-- Step 2 -->
+<div class="step" id="s2">
+<h3>Step 2: Academic</h3>
+<input id="college" placeholder="College">
+<input id="dept" placeholder="Department">
+<button onclick="next(3)">Next</button>
+</div>
+
+<!-- Step 3 -->
+<div class="step" id="s3">
+<h3>Password</h3>
+<input type="password" id="pass" placeholder="Password">
+<input type="password" id="confirm" placeholder="Confirm Password">
+<button onclick="checkPass()">Next</button>
+</div>
+
+<!-- Step 4 -->
+<div class="step" id="s4">
+<h3>Puzzle: 8 + 2 = ?</h3>
+<input id="quiz">
+<button onclick="checkQuiz()">Next</button>
+</div>
+
+<!-- Step 5 -->
+<div class="step" id="s5">
+<h3>All Done 🎉</h3>
+<div id="summary"></div>
+</div>
+
+</div>
+
+<div id="popup"></div>
+
+<script>
+
+/* Cursor */
+document.addEventListener("mousemove",e=>{
+  let c=document.getElementById("cursor");
+  c.style.left=e.pageX+"px";
+  c.style.top=e.pageY+"px";
+});
+
+/* Popup */
+function show(msg){
+  let p=document.getElementById("popup");
+  p.innerText=msg;
+  p.style.display="block";
+  setTimeout(()=>p.style.display="none",2000);
+}
+
+/* Steps */
+function next(n){
+  let email=document.getElementById("email").value;
+  let pattern=/^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+  if(n==2 && !email.match(pattern)){
+    show("Invalid Email ❌");
+    return;
+  }
+
+  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+  document.getElementById("s"+n).classList.add("active");
+}
+
+/* Password check */
+function checkPass(){
+  let p=document.getElementById("pass").value;
+  let c=document.getElementById("confirm").value;
+
+  if(p!==c){
+    show("Password mismatch ❌");
+    return;
+  }
+  next(4);
+}
+
+/* Quiz */
+function checkQuiz(){
+  let ans=document.getElementById("quiz").value;
+
+  if(ans!=10){
+    show("Wrong Answer ❌");
+    return;
+  }
+
+  summary.innerHTML=`
+  Name: ${name.value}<br>
+  Email: ${email.value}<br>
+  College: ${college.value}<br>
+  Dept: ${dept.value}
+  `;
+
+  next(5);
+}
+
+/* Hide welcome */
+setTimeout(()=>{
+  document.getElementById("welcome").style.display="none";
+},3500);
+
+</script>
+
+</body>
+</html>
